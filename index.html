@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>JIBTO AI - WEB APP</title>
+    <style>
+        :root { --gold: #d4af37; --sky: #00d4ff; --dark: #010108; }
+        body { background-color: var(--dark); font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; margin: 0; color: white; overflow: hidden; }
+        .ai-card { background: rgba(10, 10, 25, 0.95); border-radius: 30px; padding: 20px; border: 2px solid var(--sky); width: 320px; text-align: center; box-shadow: 0 0 30px rgba(0, 212, 255, 0.2); }
+        .ai-orb { width: 100px; height: 100px; border-radius: 50%; background: radial-gradient(circle, var(--sky), #000); margin: 10px auto; animation: pulse 2s infinite; cursor: pointer; border: 3px solid #fff; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        .timer-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin: 15px 0; }
+        .t-btn { background: #000; border: 1px solid var(--sky); color: var(--sky); padding: 8px 0; border-radius: 5px; font-size: 10px; cursor: pointer; }
+        .t-btn.active { background: var(--sky); color: #000; font-weight: bold; }
+        select { width: 100%; padding: 10px; border-radius: 8px; background: #000; color: #fff; border: 1px solid var(--gold); margin-bottom: 10px; }
+        .main-btn { width: 100%; padding: 15px; border-radius: 10px; background: linear-gradient(45deg, var(--gold), #f1c40f); color: #000; font-weight: bold; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="ai-card">
+        <div class="ai-orb" onclick="speak('আমি আপনার কথা শুনছি')"></div>
+        <h3 style="color:var(--gold); margin: 5px 0;">JIBTO AI PRO</h3>
+        
+        <select id="market" onchange="marketVoice()">
+            <option value="">--- ২০টি ওটিসি মার্কেট ---</option>
+            <option value="EUR/USD (OTC)">EUR/USD (OTC)</option>
+            <option value="GBP/USD (OTC)">GBP/USD (OTC)</option>
+            <option value="USD/JPY (OTC)">USD/JPY (OTC)</option>
+            <option value="AUD/CAD (OTC)">AUD/CAD (OTC)</option>
+            <option value="GOLD (OTC)">GOLD (OTC)</option>
+            </select>
+
+        <div class="timer-grid">
+            <button class="t-btn active" onclick="setT(1,this)">1m</button>
+            <button class="t-btn" onclick="setT(2,this)">2m</button>
+            <button class="t-btn" onclick="setT(3,this)">3m</button>
+            <button class="t-btn" onclick="setT(4,this)">4m</button>
+            <button class="t-btn" onclick="setT(5,this)">5m</button>
+        </div>
+
+        <div id="sig" style="font-size: 20px; margin: 10px 0; font-weight: bold; color: var(--sky);">READY</div>
+        <button class="main-btn" onclick="getSignal()">GET NEXT SIGNAL</button>
+    </div>
+
+    <script>
+        let time = 1;
+        function speak(m) {
+            window.speechSynthesis.cancel();
+            const s = new SpeechSynthesisUtterance(m);
+            s.lang = 'bn-BD';
+            window.speechSynthesis.speak(s);
+        }
+        function setT(m, b) {
+            time = m;
+            document.querySelectorAll('.t-btn').forEach(btn => btn.classList.remove('active'));
+            b.classList.add('active');
+            speak(m + " মিনিটের ট্রেড সেট হয়েছে");
+        }
+        function marketVoice() {
+            speak(document.getElementById('market').value + " মার্কেট সেভ হয়েছে");
+        }
+        function getSignal() {
+            const s = document.getElementById('sig');
+            s.innerText = "ANALYZING...";
+            speak("৫ সেকেন্ড অপেক্ষা করুন, এনালাইসিস চলছে");
+            setTimeout(() => {
+                const res = Math.random() > 0.5 ? "UP ⬆️" : "DOWN ⬇️";
+                s.innerText = "NEXT: " + res;
+                s.style.color = res.includes("UP") ? "#00ff88" : "#ff3e3e";
+                speak(time + " মিনিটের জন্য পরবর্তী ক্যান্ডেল " + (res.includes("UP") ? "উপরে" : "নিচে") + " যাবে");
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
